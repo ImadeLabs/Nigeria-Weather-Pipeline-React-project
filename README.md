@@ -22,7 +22,7 @@ A **React.js** web application that fetches, stores, and visualizes weather data
 - **Axios** – API requests
 - **OpenWeather API** – Weather data source
 - **CSS** – Styling
-
+np
 ---
 
 ## 💻 Getting Started
