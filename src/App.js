@@ -1,23 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useEffect, useState } from 'react'; // ✅ important
+import WeatherChart from './components/WeatherChart';
+import { fetchWeather } from './api/weather';
+import { db } from './db/indexedDB';
 
 function App() {
+  const [weatherData, setWeatherData] = useState([]);
+  const cities = ['Lagos', 'Abuja', 'Port Harcourt'];
+
+  useEffect(() => {
+    const getWeather = async () => {
+      const allData = [];
+      for (const city of cities) {
+        const data = await fetchWeather(city);
+        console.log('Fetched data for', city, data);
+        if (data) {
+          allData.push({ time: city, temperature: data.temperature });
+          await db.weather.add({ ...data, timestamp: Date.now() });
+        }
+      }
+      setWeatherData(allData);
+    };
+
+    getWeather();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: '20px' }}>
+      <h1>Nigeria Weather Chart</h1>
+      {weatherData.length > 0 ? (
+        <WeatherChart data={weatherData} />
+      ) : (
+        <p>Loading weather data...</p>
+      )}
     </div>
   );
 }
